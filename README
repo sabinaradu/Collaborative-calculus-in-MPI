@@ -1,0 +1,38 @@
+Sabina Radu - 331CB - TEMA 3 APD
+
+    Inainte de orice, am initializat mediul de lucru mpi folosind MPI_Init,
+dupa care am partajat numarul de procese si am initializat rank-ul fiecarui 
+proces. Am ales sa fac task urile 1, 2 si bonunsul impreuna. Deci nu am 
+folosit deloc legatura dintre 0 si 1.
+
+Task 1:
+    Am declarat o matrice 'coordonatori', ce contine pe fiecare linie 
+procesele fiecarui coordonator si un vector 'procese_coord',
+reprezentand numarul de procese coordonate de fiecare coordonator in 
+parte. Totodata, exista o variabila coordonator ce are rolul
+de a stoca rank-ul fiecarui coordonator (pentru simplitate in continuare).
+    In primul rand fiecare dintre cei 3 coordonatori isi citeste fisierul 
+    propriu de topolgie, mai apoi trimitandu-si unii altora
+topologia, tinand cont ca 0 nu trebuie sa comunice cu 1 si invers. Dupa ce 
+fiecare coordonator a transmis topologia cu succes catre ceilati coordonatori, 
+fiecare in parte va avea topologia intreaga reprezentata de tuplul 
+(coordonatori, procese_coord). Acest tuplu este transmis mai departe fiecarui 
+worker de catre coordonatori.
+    Folosindu-ma de functia afiseaza topologie, care foloseste rank-ul alaturi 
+de tuplul de topologie afisez pentru fiecare worker si coordonator topolgia.
+
+Task 2:
+    Am declarat un vector v, si un intreg k, ce tine minte argumentul citit.
+Procesul 0 genereaza vectorul v dupa regula v[i] = i, si il trimite celorlalti 
+coordonatori, tinandu-se cont de constrangerea de comunicare. Coordonatorii 
+incep sa trimita vectorul catre workeri impreuna cu bucata ce trebuie 
+prelucrata de fiecare in parte, workerii dupa ce calculeaza bucata lor, trimit 
+in continuare coordonatorilor, iar coordonatorii dupa ce primesc toate bucatile 
+de la workeri, trimit mai departe fiecare partea sa, 1 lui 2, iar 2 lui 0.
+    De mentionat, cand procesele coordonator primesc bucati din vectorul final, 
+sunt atent calculati indici de inceput si final, astfel incat operatiile de send 
+(mai putin cele initiale catre workeri) sa fie cat mai eficiente. Totodata, o 
+impartire in functie de numarul de procese are loc la liniile 155 - 167, aceasta 
+impartire atribuie fiecarui coordonator o parte continua din vector, astfel ca la 
+trimiterea catre procesul 0 are loc doar 1 singur send per coorodnator.
+    La sfarsit, de pe procesul 0, afisez vectorul final.
